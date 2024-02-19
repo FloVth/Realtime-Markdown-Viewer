@@ -47,17 +47,76 @@
     }
     return str;
    }
+
 var parseStrong = function(str) {
   var strongRegExp = /(~~)(.*?)\1/;
   var stra = [];
   while ((stra = strongRegExp.exec(str)) !== null) {
-      str = str.replace(stra[0], '<strong>' + stra[2] + '</strong>')
-    }
-    return str;
+    str = str.replace(stra[0], '<strong>' + stra[2] + '</strong>')
   }
+  return str;
+}
+
+
+ var parseHorizontaleLine = function(str) {
+  var horizontalRegExp = /^(?:([\*\-_] ?)+)\1\1$/gm;
+  var stra = [];
+  while ((stra = horizontalRegExp.exec(str)) !== null) {
+    str = str.replace(stra[0], '\n<hr/>\n');
+  }
+  return str;
+ }
+
+ var parseLink = function(str) {
+  var linkRegExp = /\[([^\[]+)\]\(([^\)]+)\)/;
+  var stra = [];
+  while ((stra = linkRegExp.exec(str)) !== null) {
+    str = str.replace(stra[0], '<a ' + 'href="' + stra[2] + '">' + stra[1] + '</a>');
+  }
+  return str;
+ }
+
+ var parseNewLine = function(str) {
+  var newLineRegExp = /(\n)/;
+  var stra = [];
+  while ((stra = newLineRegExp.exec(str)) !== null) {
+    str = str.replace(stra[0], '<br/>');
+  }
+  return str;
+ }
+
+ var parseCode = function(str) {
+  var codeRegExp = /`{1}(\w+)`{1}/;
+  var stra = [];
+  while ((stra = codeRegExp.exec(str)) !== null) {
+    str = str.replace(stra[0], '<pre>' + stra[1] + '</pre>');
+  }
+  return str;
+ }
+
+
+ var parseBlockQuote = function(str) {
+  var quoteRegExp = /\:\"(.*?)\"\:/
+  var stra = [];
+  while ((stra = quoteRegExp.exec(str)) !== null) {
+    str = str.replace(stra[0], '<blockquote>' + stra[1] + '</blockquote>');
+  }
+  return str;
+ }
+
+ var parseDel = function(str) {
+  var delRegExp = /\{(.*?)\}/
+  var stra = [];
+  while ((stra = delRegExp.exec(str)) !== null) {
+    str = str.replace(stra[0], '<del>' + stra[1] + '</del>');
+  }
+  return str;
+ }
+
 var markdown = {
   parse: function (str, strict) {
     'use strict';
+    str = parseNewLine(str);
     str = parseHeadline(str);
     str = parseBold(str);
     str = parseStrong(str);
@@ -65,6 +124,9 @@ var markdown = {
     str = parseItalic(str);
     str = parseHorizontaleLine(str);
     str = parseCode(str);
+    str = parseBlockQuote(str);
+    str = parseDel(str);
+
     return str;
   }
 };
